@@ -1,3 +1,25 @@
-.venv
-Previous Versions
-Notes.db
+# Ignore Python cache files
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Ignore virtual environments
+.venv/
+env/
+
+# Ignore build and distribution files
+build/
+dist/
+*.egg-info/
+
+# Ignore log files
+*.log
+
+# Ignore IDE/editor-specific files
+.vscode/
+.idea/
+
+# Ignore specific files and folders
+Previous Versions/
+*.db

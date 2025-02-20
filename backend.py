@@ -11,6 +11,16 @@ if not os.path.exists('Notes.db'):
                 (filename TEXT, text TEXT)''')
         conn.commit()
         conn.close()
+        
+if not os.path.exists('Settings.db'):
+        conn = sqlite3.connect('Settings.db')
+        c = conn.cursor()
+        c.execute('''CREATE TABLE Settings
+                (setting TEXT, value TEXT)''')
+        conn.commit()
+        c.execute("INSERT INTO Settings (setting, value) VALUES (?, ?)", ("bg_color", "#2f3136"))
+        conn.commit()
+        conn.close()
 
 #Creates new filename with text
 def create_file(filename, text):
@@ -35,6 +45,13 @@ def update_file(filename, text):
         conn = sqlite3.connect('Notes.db')
         c = conn.cursor()
         c.execute("UPDATE Notes SET text = ? WHERE filename = ?", (text, filename))
+        conn.commit()
+        conn.close()
+        
+def change_filename(old_filename, new_filename):
+        conn = sqlite3.connect('Notes.db')
+        c = conn.cursor()
+        c.execute("UPDATE Notes SET filename = ? WHERE filename = ?", (new_filename, old_filename))
         conn.commit()
         conn.close()
 
@@ -63,17 +80,6 @@ def get_all_data():
         # print(c.fetchall())
         # conn.commit()
         # conn.close()
-
-
-# def get_all_data(filename):
-#         conn = sqlite3.connect('Notes.db')
-#         c = conn.cursor()
-#         c.execute("SELECT filename FROM Notes WHERE filename = ?", (filename,))
-#         print(c.fetchall())
-#         c.execute("SELECT text FROM Notes WHERE filename = ?", (filename,))
-#         print(c.fetchall())
-#         conn.commit()
-#         conn.close()
         
 #get filename and text, without any parameters
 def get_filename():
@@ -84,3 +90,19 @@ def get_filename():
         conn.commit()
         conn.close()
         return filename
+
+
+
+#Updates the text from the specified setting
+def bg_color(bg_color, get):
+        conn = sqlite3.connect('Settings.db')
+        c = conn.cursor()
+        if get:
+                c.execute("SELECT value FROM Settings WHERE setting = ?", ('bg_color',))
+                bg_color = c.fetchone()  # Use fetchone() to get a single result
+                conn.close()
+                return bg_color[0] if bg_color else None
+        else:
+                c.execute("UPDATE Settings SET value = ? WHERE setting = ?", (bg_color, "bg_color"))
+                conn.commit()
+                conn.close()
